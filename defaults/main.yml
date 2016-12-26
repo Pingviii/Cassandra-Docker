@@ -9,7 +9,7 @@
 #
 # user-configurable defaults
 #
-install_docker: false
+install_docker: true
 
 install: true
 

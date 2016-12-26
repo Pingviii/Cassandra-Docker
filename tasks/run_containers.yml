@@ -13,7 +13,9 @@
         - "{{ node3_name }}"              #comment if we just add extra node 
 #        - "{{ node3_name }}"              #UNcomment if we add extra node 
 
-
+    - pause:
+        seconds: 10
+        
     - name: run nodetool status
       command: docker exec {{ seed_name }} nodetool status
       register: status
