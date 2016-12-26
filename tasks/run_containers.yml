@@ -1,0 +1,23 @@
+---
+# file: tasks/run_containers.yml
+# running containers
+# 
+
+    - name: run seed container                          #comment if we just add extra node 
+      command: docker run -d --name {{ seed_name }} poklet/cassandra start             #comment if we just add extra node 
+
+    - name: run other containers
+      command: docker run -d --name {{ item }} --link {{ seed_name }}:seed poklet/cassandra start seed
+      with_items:
+        - "{{ node2_name }}"              #comment if we just add extra node 
+        - "{{ node3_name }}"              #comment if we just add extra node 
+#        - "{{ node3_name }}"              #UNcomment if we add extra node 
+
+
+    - name: run nodetool status
+      command: docker exec {{ seed_name }} nodetool status
+      register: status
+
+    - debug: msg="{{ status.stdout }}"   
+    - debug: msg="{{ status.stderr }}"
+

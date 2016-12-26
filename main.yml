@@ -1,0 +1,17 @@
+---
+- hosts: nodes
+  become: yes
+  become_method: sudo
+
+  vars_files:
+    - 'defaults/main.yml'
+
+  tasks:
+    - include: tasks/run_containers.yml
+      when: (install) and (not stop_containers) and (not run_stress_test)
+
+    - include: tasks/run_stress_test.yml
+      when: (run_stress_test) and (not install) and (not stop_containers)
+
+    - include: tasks/stop_containers.yml
+      when: (stop_containers) and (not install) and (not run_stress_test)

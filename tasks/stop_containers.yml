@@ -1,0 +1,18 @@
+---
+# file: tasks/stop_containers.yml
+# stopping and deleting containers
+# 
+
+    - name: stop containers
+      command: docker kill {{ item }}
+      with_items:
+        - "{{ seed_name }}"
+        - "{{ node2_name }}"
+        - "{{ node3_name }}"
+
+    - name: delete containers
+      command: docker rm {{ item }}
+      with_items:
+        - "{{ seed_name }}"
+        - "{{ node2_name }}"
+        - "{{ node3_name }}"

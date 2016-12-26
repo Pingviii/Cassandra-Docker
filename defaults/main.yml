@@ -1,0 +1,23 @@
+---
+
+#
+# variables needed to be defined in user's playbook
+#
+
+
+
+#
+# user-configurable defaults
+#
+install: true
+
+seed_name: cass1
+
+node2_name: cass2
+node3_name: cass3
+#node4_name: cass4 #uncomment if we add extra node
+
+run_stress_test: true
+node_stress: cass1
+
+stop_containers: false

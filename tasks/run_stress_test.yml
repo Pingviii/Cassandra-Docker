@@ -1,0 +1,47 @@
+---
+# file: tasks/run_stress_test.yml
+# running stress-test
+# 
+# Before starting stress-test we must add keyspace, and replication factor. (manually)
+# Launch `cqlsh`:
+#
+#        docker run -it --rm --net container:cass1 poklet/cassandra cqlsh
+#
+#    Paste this in:
+#
+#        create keyspace demo with replication = {'class':'SimpleStrategy', 'replication_factor':2};
+#        use demo;
+#        quit;
+#
+#
+
+- name: stress-test 1 (Insert (write) one million rows)
+  command: docker exec {{ node_stress }} cassandra-stress write n=1000000 -rate threads=50 
+  register: stressTestLog
+
+- debug: msg="{{ stressTestLog.stdout }}"
+- debug: msg="{{ stressTestLog.stderr }}"
+
+- name: stress-test 2 (Read two hundred thousand rows.)
+  command: docker exec {{ node_stress }}  cassandra-stress read n=200000 -rate threads=50
+  register: stressTestLog
+
+- debug: msg="{{ stressTestLog.stdout }}"
+- debug: msg="{{ stressTestLog.stderr }}"
+
+- name: stress-test 3 (Read rows for a duration of 3 minutes.)
+  command: docker exec {{ node_stress }}  cassandra-stress read duration=3m -rate threads=50
+  register: stressTestLog
+
+- debug: msg="{{ stressTestLog.stdout }}"
+- debug: msg="{{ stressTestLog.stderr }}"
+
+- name: stress-test 4 (Read 200,000 rows without a warmup of 50,000 rows first.)
+  command: docker exec {{ node_stress }}  cassandra-stress read n=200000 no-warmup -rate threads=50
+  register: stressTestLog
+
+- debug: msg="{{ stressTestLog.stdout }}"
+- debug: msg="{{ stressTestLog.stderr }}"
+
+
+
