@@ -7,6 +7,9 @@
     - 'defaults/main.yml'
 
   tasks:
+    - include: tasks/install_docker.yml
+      when: (install_docker) and (not stop_containers) and (not run_stress_test)
+
     - include: tasks/run_containers.yml
       when: (install) and (not stop_containers) and (not run_stress_test)
 

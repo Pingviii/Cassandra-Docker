@@ -9,6 +9,8 @@
 #
 # user-configurable defaults
 #
+install_docker: false
+
 install: true
 
 seed_name: cass1

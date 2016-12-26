@@ -1,0 +1,49 @@
+# install docker engine. Delete firewalld.
+---
+- name: "install dockers"
+  hosts: all
+#  gather_facts: no
+#  remote_user: ansible
+  become: yes
+#  become_user: root
+#  become_method: sudo
+
+  tasks:
+   - name: Remove old docker-engine installation
+     yum: name=docker-engine state=removed
+
+   - name: Add EPEL repository
+     yum: name=epel-release state=latest
+  
+   - name: Upgrade packages
+     yum: name=* state=latest
+
+   - name: Remove firewalld package
+     yum: name=firewalld state=absent
+
+   - name: Add docker repository
+     yum_repository:
+       name: docker
+       description: Docker Repository
+       baseurl: https://yum.dockerproject.org/repo/main/centos/7/
+       enabled: yes
+       gpgcheck: yes
+       gpgkey: https://yum.dockerproject.org/gpg
+
+   - name: Install docker-engine
+     yum: name=docker-engine state=latest
+
+   - name: Check if filedocker.service exeists
+     stat: path=/usr/lib/systemd/system/docker.service
+     register: docker_file_stat
+
+   - name: Update docker startup settings
+     replace: dest=/usr/lib/systemd/system/docker.service regexp='^ExecStart=.*' replace='ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///run/docker.sock --cluster-store=consul://{{ groups['swarm_cluster_managers'][0] }}:8500  --insecure-registry {{ registry_name }}:5000'
+     when: docker_file_stat.stat.exists
+     notify: enable_and_restart_docker_engine
+
+   - name: Check Docker version
+     shell: docker --version 
+     register: docker_version
+   - debug: msg="{{ docker_version.stdout }}"
+

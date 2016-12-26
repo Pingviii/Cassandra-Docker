@@ -238,7 +238,10 @@ Cassandra cluster + OpsCenter monitoring
 User-configurable defaults:
 
 ```yaml
-# uninstall cassandra docker containers?
+# install docker engine?
+install_docker: false
+
+# install cassandra docker containers?
 install: false
 
 # set seed name
